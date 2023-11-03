@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { TurnScores } from './objectsAndConstants/GameClass'
 import { GamesTypes } from './objectsAndConstants/GamesTypes'
+import Dropdown, { type DropdownChangeEvent } from 'primevue/dropdown'
 
 import { ref } from 'vue'
 
@@ -13,14 +14,27 @@ defineProps<{
 var selectedGame = ref('') // ref = reactive state -- todo make object for score
 const test = 'teeest'
 const testRef = ref('teeestRef')
+
+function onChange(event: DropdownChangeEvent) {
+  //turnScores.game = event.value
+}
 </script>
+
+<style scoped></style>
 
 <template>
   <tr>
-    <Listbox v-model="selectedGame" :options="GamesTypes" />
-    <p>{{ GamesTypes }}</p>
+    {{
+      turnScores.turn
+    }}-<Dropdown
+      v-model="selectedGame"
+      :options="GamesTypes"
+      :onChange="$emit('updateTurnGame', selectedGame)"
+    />
   </tr>
+  <tr
+    v-for="playerScore in turnScores.scores"
+    :playerScore="playerScore"
+    :key="playerScore.player"
+  ></tr>
 </template>
-
-<style scoped></style>
-./objectsAndConstants/GameClass
