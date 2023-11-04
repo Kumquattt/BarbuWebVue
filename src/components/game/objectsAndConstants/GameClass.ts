@@ -11,7 +11,7 @@ export class Game {
 
   addPlayer(name: string): boolean {
     let wasAdded: boolean = true
-    if (this.currentPlayers().includes(name)) {
+    if (name.length == 0 || this.currentPlayers().includes(name)) {
       wasAdded = false
     } else {
       this.players.push(new PlayerScore(name))

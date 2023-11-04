@@ -19,7 +19,9 @@ const currentGameComputed = computed(() => lastTurn.value.game)
 
 function tryAddPlayer(event: any): boolean {
   //Todo trouver comment accéder à la value d'une target d'un Event
-  return game.value.addPlayer(event.target.value) //TODO warning si déjà présent
+  const wasAdded = game.value.addPlayer(event.target.value) //TODO warning si déjà présent
+  event.target.value = ''
+  return wasAdded
 }
 
 function updateTurnGame(game: string) {
@@ -33,12 +35,11 @@ function updateTurnPlayerScore(name: string, score: number) {
 
 <style scoped>
 * {
-  border: 1px dashed green;
+  /* border: 1px dashed green; */
 }
 .container {
   display: flex;
   min-height: 50px;
-  justify-content: left;
 }
 
 .game-header {
@@ -52,23 +53,30 @@ function updateTurnPlayerScore(name: string, score: number) {
 }
 
 .game-table {
+  flex-direction: column;
   div {
-    align-items: center;
-    height: 50px;
-    min-width: 200px;
-    background-color: brown;
-    margin-top: 2px;
-    margin-bottom: 2px;
+    /* align-items: left; */
+    min-height: 20px;
+    /* min-width: 100px; */
+    /* background-color: brown; */
+    /* margin-top: 2px;
+    margin-bottom: 2px; */
   }
 
   .table-header {
     background-color: aqua;
+
+    div {
+      min-width: 100px;
+    }
   }
   .table-players {
     background-color: lightsalmon;
+    flex-direction: column;
   }
   .table-scores {
     background-color: lightyellow;
+    flex-direction: column;
   }
 }
 </style>
@@ -79,29 +87,33 @@ function updateTurnPlayerScore(name: string, score: number) {
     <div>Jeu: {{ currentGameComputed }}</div>
   </div>
 
-  <div class="game-table">
-    <div class="table-header container">
-      <div>Joueuse: {{}}</div>
-      <div>Jeu: {{}}</div>
-    </div>
-    <div class="table-players container">
-      <PlayerScoreRow
-        v-for="playerScore in game.players"
-        :playerScore="playerScore"
-        :key="playerScore.player"
-      />
-      <input class="input-add-player" v-on:blur="tryAddPlayer" />
-    </div>
-    <div class="table-scores">
-      <GameTurn
-        v-for="turnScores in game.turns"
-        :turnScores="turnScores"
-        :key="turnScores.turn"
-        @update-turn-game="updateTurnGame"
-      />
-      <!-- @update-score="updateTurnPlayerScore" kebab-case converti en CamelCase automatiquemeet-->
+  <div class="game-table container">
+    <div class="table-content container">
+      <div class="table-players container">
+        <div></div>
+        <div></div>
+        <PlayerScoreRow
+          v-for="playerScore in game.players"
+          :playerScore="playerScore"
+          :key="playerScore.player"
+        />
+        <input class="input-add-player" v-on:blur="tryAddPlayer" />
+      </div>
+      <div class="table-scores container">
+        <div class="table-header container">
+          <div>Joueuse: {{}}</div>
+          <div>Jeu: {{}}</div>
+        </div>
+        <GameTurn
+          v-for="turnScores in game.turns"
+          :turnScores="turnScores"
+          :key="turnScores.turn"
+          @update-turn-game="updateTurnGame"
+        />
+        <!-- @update-score="updateTurnPlayerScore" kebab-case converti en CamelCase automatiquemeet-->
+      </div>
     </div>
   </div>
 
-  <div>{{ game }}</div>
+  <div style="margin-top: 50px">{{ game }}</div>
 </template>
