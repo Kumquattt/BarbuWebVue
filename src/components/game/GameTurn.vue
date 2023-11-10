@@ -23,18 +23,16 @@ function onChange(event: DropdownChangeEvent) {
 <style scoped></style>
 
 <template>
-  <tr>
-    {{
-      turnScores.turn
-    }}-<Dropdown
+  <div>
+    {{ turnScores.turn }}-<Dropdown
       v-model="selectedGame"
       :options="GamesTypes"
       :onChange="$emit('updateTurnGame', selectedGame)"
     />
-  </tr>
-  <tr
+  </div>
+  <div
     v-for="playerScore in turnScores.scores"
     :playerScore="playerScore"
     :key="playerScore.player"
-  ></tr>
+  ></div>
 </template>

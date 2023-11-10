@@ -39,7 +39,6 @@ function updateTurnPlayerScore(name: string, score: number) {
 }
 .container {
   display: flex;
-  min-height: 50px;
 }
 
 .game-header {
@@ -53,29 +52,31 @@ function updateTurnPlayerScore(name: string, score: number) {
 }
 
 .game-table {
-  flex-direction: column;
+  border: 1px dashed;
+  display: grid;
+  grid-template: 1fr 1fr 4fr / 2fr 1fr 1fr;
   div {
-    /* align-items: left; */
     min-height: 20px;
-    /* min-width: 100px; */
-    /* background-color: brown; */
-    /* margin-top: 2px;
-    margin-bottom: 2px; */
+    min-width: 100px;
   }
 
+  /* TODO séparer en 2*/
   .table-header {
     background-color: aqua;
-
+    grid-area: 1 / 2 / span 1 / -1;
     div {
       min-width: 100px;
     }
   }
   .table-players {
     background-color: lightsalmon;
+    grid-area: 3 / 1 / 3 / -1;
+    min-width: 100px;
     flex-direction: column;
   }
   .table-scores {
     background-color: lightyellow;
+    grid-area: 2 / 2 / -1 / -1;
     flex-direction: column;
   }
 }
@@ -88,30 +89,28 @@ function updateTurnPlayerScore(name: string, score: number) {
   </div>
 
   <div class="game-table container">
-    <div class="table-content container">
-      <div class="table-players container">
-        <div></div>
-        <div></div>
-        <PlayerScoreRow
-          v-for="playerScore in game.players"
-          :playerScore="playerScore"
-          :key="playerScore.player"
-        />
-        <input class="input-add-player" v-on:blur="tryAddPlayer" />
-      </div>
-      <div class="table-scores container">
-        <div class="table-header container">
-          <div>Joueuse: {{}}</div>
-          <div>Jeu: {{}}</div>
-        </div>
-        <GameTurn
-          v-for="turnScores in game.turns"
-          :turnScores="turnScores"
-          :key="turnScores.turn"
-          @update-turn-game="updateTurnGame"
-        />
-        <!-- @update-score="updateTurnPlayerScore" kebab-case converti en CamelCase automatiquemeet-->
-      </div>
+    <div class="table-players container">
+      <PlayerScoreRow
+        v-for="playerScore in game.players"
+        :playerScore="playerScore"
+        :key="playerScore.player"
+      />
+      <input class="input-add-player" v-on:blur="tryAddPlayer" />
+    </div>
+
+    <div class="table-header container">
+      <div>Joueuse: {{}}</div>
+      <div>Jeu: {{}}</div>
+    </div>
+
+    <div class="table-scores container">
+      <GameTurn
+        v-for="turnScores in game.turns"
+        :turnScores="turnScores"
+        :key="turnScores.turn"
+        @update-turn-game="updateTurnGame"
+      />
+      <!-- @update-score="updateTurnPlayerScore" kebab-case converti en CamelCase automatiquemeet-->
     </div>
   </div>
 
