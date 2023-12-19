@@ -20,19 +20,56 @@ function onChange(event: DropdownChangeEvent) {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.column {
+  width: 30px;
+  margin: 2px;
+}
+
+.turn {
+  height: 1em;
+}
+
+.game {
+  font-size: 0.75em;
+}
+
+.index {
+  vertical-align: super;
+  font-size: 0.75em;
+}
+
+.score {
+  -moz-appearance: textfield;
+  height: 1em;
+  width: 100%;
+}
+</style>
 
 <template>
-  <div>
-    {{ turnScores.turn }}-<Dropdown
-      v-model="selectedGame"
-      :options="GamesTypes"
-      :onChange="$emit('updateTurnGame', selectedGame)"
-    />
+  <div class="column">
+    <div class="turn">
+      <span class="index">{{ turnScores.turn }}</span>
+      <Dropdown
+        v-model="selectedGame"
+        :options="GamesTypes"
+        :onChange="$emit('updateTurnGame', turnScores.turn, selectedGame)"
+        class="game"
+      />
+    </div>
+    <div
+      class="scoreRow"
+      v-for="playerScore in turnScores.scores"
+      :playerScore="playerScore"
+      :key="playerScore.player"
+    >
+      <!--TODO: add 'list' attribute according to selected game-->
+      <input
+        class="score"
+        v-model="playerScore.score"
+        @change="$emit('updateTurnPlayerScore', turnScores.turn, playerScore)"
+        type="number"
+      />
+    </div>
   </div>
-  <div
-    v-for="playerScore in turnScores.scores"
-    :playerScore="playerScore"
-    :key="playerScore.player"
-  ></div>
 </template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, type ComputedRef } from 'vue'
 import GameTurn from './GameTurn.vue'
-import { Game, TurnScores } from './objectsAndConstants/GameClass'
+import { Game, PlayerScore, TurnScores } from './objectsAndConstants/GameClass'
 import PlayerScoreRow from './PlayerScoreRow.vue'
 
 defineProps<{
@@ -11,25 +11,32 @@ defineProps<{
 const game = ref(new Game()) // ref() ?
 
 // Todo : check reg. if all thos computed are required
-const numberOfTurns: ComputedRef<number> = computed(() => game.value.turns.length)
-const lastTurn: ComputedRef<TurnScores> = computed(() => game.value.turns[numberOfTurns.value - 1])
+const lastTurn: ComputedRef<TurnScores> = computed(() => game.value.getLastTurn())
 
-const currentPlayerComputed = computed(() => lastTurn.value.player_turn)
-const currentGameComputed = computed(() => lastTurn.value.game)
+const currentPlayerComputed = computed(() => game.value.getCurrentDeciderPlayer())
+const currentGameComputed = computed(() => game.value.getCurrentGame())
 
 function tryAddPlayer(event: any): boolean {
-  //Todo trouver comment accéder à la value d'une target d'un Event
   const wasAdded = game.value.addPlayer(event.target.value) //TODO warning si déjà présent
   event.target.value = ''
   return wasAdded
 }
 
-function updateTurnGame(game: string) {
-  console.log(game)
+function updateTurnGame(turn: number, turnGame: string) {
+  console.log(turn + '' + turnGame)
+  game.value.updateTurn(turn, turnGame)
 }
 
-function updateTurnPlayerScore(name: string, score: number) {
-  console.log(name + score)
+function updateTurnPlayerScore(turn: number, playerScore: PlayerScore) {
+  console.log(turn + '' + playerScore)
+}
+
+function load10players() {
+  const fakeEvent = { target: { value: '' } }
+  for (let i = 0; i < 10; i++) {
+    fakeEvent.target.value = 'p' + i
+    tryAddPlayer(fakeEvent)
+  }
 }
 </script>
 
@@ -52,12 +59,13 @@ function updateTurnPlayerScore(name: string, score: number) {
 }
 
 .game-table {
+  background-color: rgb(209, 209, 209);
   border: 1px dashed;
   display: grid;
   grid-template: 1fr 1fr 4fr / 2fr 1fr 1fr;
+  /* grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); */ /* ==> TODO responsive ?*/
   div {
     min-height: 20px;
-    min-width: 100px;
   }
 
   /* TODO séparer en 2*/
@@ -77,18 +85,19 @@ function updateTurnPlayerScore(name: string, score: number) {
   .table-scores {
     background-color: lightyellow;
     grid-area: 2 / 2 / -1 / -1;
-    flex-direction: column;
   }
 }
 </style>
 
 <template>
+  <div><input type="button" v-on:click="load10players" value="TEST - Add 10 players" /></div>
+
   <div class="container game-header">
     <div>Tour: {{ currentPlayerComputed }}</div>
     <div>Jeu: {{ currentGameComputed }}</div>
   </div>
 
-  <div class="game-table container">
+  <div class="game-table">
     <div class="table-players container">
       <PlayerScoreRow
         v-for="playerScore in game.players"
@@ -96,6 +105,7 @@ function updateTurnPlayerScore(name: string, score: number) {
         :key="playerScore.player"
       />
       <input class="input-add-player" v-on:blur="tryAddPlayer" />
+      <!-- detect enter key ?-->
     </div>
 
     <div class="table-header container">
@@ -109,6 +119,7 @@ function updateTurnPlayerScore(name: string, score: number) {
         :turnScores="turnScores"
         :key="turnScores.turn"
         @update-turn-game="updateTurnGame"
+        @update-turn-player-score="updateTurnPlayerScore"
       />
       <!-- @update-score="updateTurnPlayerScore" kebab-case converti en CamelCase automatiquemeet-->
     </div>

@@ -28,16 +28,68 @@ export class Game {
   playerIndex(name: string): number {
     return this.players.findIndex((ps: PlayerScore) => ps.is(name))
   }
+
+  updateTurn(turn: number, gameTurn: string): void {
+    // /!\ supprimer anciens scores si certains présents ?
+
+    if (gameTurn != '') {
+      if (turn > this.turns.length - 1) {
+        this.addTurn(gameTurn)
+      } else {
+        this.turns[turn].updateGame(gameTurn)
+      }
+    }
+  }
+
+  addTurn(gameTurn: string): boolean {
+    console.log('addTurn')
+    let wasAdded = false
+
+    const newTurn = new TurnScores(this.turns[this.turns.length - 1].turn + 1, gameTurn)
+    this.players.forEach((player) => newTurn.addPlayer(player.player))
+    console.log(newTurn)
+
+    this.turns.push(newTurn)
+
+    wasAdded = true // TODO : add check that add was done OK ?
+    return wasAdded
+  }
+
+  getLastTurn() {
+    return this.turns[this.turns.length - 1]
+  }
+
+  getCurrentDeciderPlayer() {
+    return this.getLastTurn().deciderPlayer
+  }
+
+  getCurrentGame() {
+    return this.getLastTurn().game
+  }
+
+  getNumberOfTurns() {
+    return this.turns[this.turns.length - 1].turn
+  }
+
+  toStringSimple() {
+    const playersNames: string[] = []
+    this.players.forEach((p) => playersNames.push(p.player))
+
+    return (
+      'Game ' + this.date + ' - Players: [' + playersNames + '] - Turns: ' + this.getNumberOfTurns()
+    )
+  }
 }
 
 export class TurnScores {
   turn = 0 // Pour détecter facilement instanciations hors-constructeur
-  player_turn = ''
-  game = ''
+  deciderPlayer = ''
+  game = '0'
   scores: PlayerScore[] = []
 
-  constructor(turn: number) {
+  constructor(turn: number, game: string = '?') {
     this.turn = turn
+    this.game = game
   }
 
   isPresent(name: string): boolean {
@@ -46,6 +98,16 @@ export class TurnScores {
 
   addPlayer(name: string) {
     this.scores.push(new PlayerScore(name))
+  }
+
+  updateGame(game: string) {
+    //TODO: Add controls, scores must be coherents
+    // or reset everything ?
+    this.game = game
+  }
+
+  toString() {
+    return 'Turn ' + this.turn + ' - Game: ' + this.game + ' - Player: ' + this.deciderPlayer
   }
 }
 
@@ -59,5 +121,9 @@ export class PlayerScore {
 
   is(name: string): boolean {
     return this.player == name
+  }
+
+  toString() {
+    return 'Player: ' + this.player + ' (' + this.score + ' pts)'
   }
 }
