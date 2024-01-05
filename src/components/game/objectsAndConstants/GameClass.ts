@@ -71,6 +71,11 @@ export class Game {
     return this.turns[this.turns.length - 1].turn
   }
 
+  getPlayers() {
+    console.log(this.players.map((p) => p.player))
+    return this.players.map((p) => p.player)
+  }
+
   toStringSimple() {
     const playersNames: string[] = []
     this.players.forEach((p) => playersNames.push(p.player))
