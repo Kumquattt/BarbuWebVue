@@ -22,12 +22,11 @@ function onChange(event: DropdownChangeEvent) {
 
 <style scoped>
 .column {
-  width: 30px;
-  margin: 2px;
+  min-width: 30px;
 }
 
 .turn {
-  height: 1em;
+  min-height: 1em;
 }
 
 .game {
@@ -48,7 +47,7 @@ function onChange(event: DropdownChangeEvent) {
 
 <template>
   <div class="column">
-    <div class="turn">
+    <!-- <div class="turn">
       <span class="index">{{ turnScores.turn }}</span>
       <Dropdown
         v-model="selectedGame"
@@ -56,7 +55,7 @@ function onChange(event: DropdownChangeEvent) {
         :onChange="$emit('updateTurnGame', turnScores.turn, selectedGame)"
         class="game"
       />
-    </div>
+    </div> -->
     <div
       class="scoreRow"
       v-for="playerScore in turnScores.scores"

@@ -74,45 +74,54 @@ function load10players() {
     'filler gameSelectors'
     'players scores';
 
-  /* grid-template:
-    [filler] "filler header" */
-  /* grid-template: 1fr 1fr 4fr / 2fr 1fr 1fr; */
-  /* grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); */ /* ==> TODO responsive ?*/
-  div {
-    min-height: 20px;
-  }
-
-  /* TODO séparer en 2*/
   .table-header {
     background-color: aqua;
 
     grid-area: header;
     display: flex;
-    grid-area: 1 / 2 / span 1 / -1;
     div {
       min-width: 100px;
     }
   }
+
+  .table-game-selectors {
+    background-color: lightgreen;
+    grid-area: gameSelectors;
+    width: 10em;
+    display: flex;
+
+    .index {
+      vertical-align: super;
+      font-size: 0.75em;
+    }
+  }
+
+  /* VARIABLE */
+  --scores-row-height: 2rem;
+
+  .score-row {
+    height: var(--scores-row-height);
+  }
+
   .table-players {
     background-color: lightsalmon;
 
     grid-area: players;
-    /* grid-area: 3 / 1 / 3 / -1; */
 
     display: flex;
-    min-width: 100px;
     flex-direction: column;
-  }
-
-  .table-game-selectors {
-    grid-area: gameSelectors;
   }
 
   .table-scores {
     background-color: lightyellow;
 
     grid-area: scores;
-    /* grid-area: 2 / 2 / -1 / -1; */
+    display: flex;
+    flex-direction: row;
+
+    .score {
+      height: 70%;
+    }
   }
 }
 </style>
@@ -130,12 +139,16 @@ function load10players() {
 
     <div class="table-players">
       <PlayerScoreRow
+        class="score-row"
         v-for="playerScore in game.players"
         :playerScore="playerScore"
         :key="playerScore.player"
       />
-      <input class="input-add-player" v-on:blur="tryAddPlayer" v-on:keyup.enter="tryAddPlayer" />
-      <!-- detect enter key ?-->
+      <input
+        class="input-add-player score-row"
+        v-on:blur="tryAddPlayer"
+        v-on:keyup.enter="tryAddPlayer"
+      />
     </div>
 
     <div class="table-header">
@@ -152,14 +165,32 @@ function load10players() {
     </div>
 
     <div class="table-scores">
-      <GameTurn
+      <div v-for="turnScores in game.turns" :key="turnScores.turn">
+        <div
+          class="score-row"
+          v-for="playerScore in turnScores.scores"
+          :playerScore="playerScore"
+          :key="playerScore.player"
+        >
+          <!--TODO: add 'list' attribute according to selected game-->
+          <input
+            class="score"
+            v-model="playerScore.score"
+            @change="updateTurnPlayerScore(turnScores.turn, playerScore)"
+            type="number"
+          />
+        </div>
+      </div>
+
+      <!-- <GameTurn
+        class="score-row"
         v-for="turnScores in game.turns"
         :turnScores="turnScores"
         :key="turnScores.turn"
         @update-turn-game="updateTurnGame"
         @update-turn-player-score="updateTurnPlayerScore"
-      />
-      <!-- @update-score="updateTurnPlayerScore" kebab-case converti en CamelCase automatiquemeet-->
+      /> -->
+      <!--kebab-case converti en CamelCase automatiquement-->
     </div>
   </div>
 
