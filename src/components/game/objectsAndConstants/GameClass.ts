@@ -29,23 +29,24 @@ export class Game {
     return this.players.findIndex((ps: PlayerScore) => ps.is(name))
   }
 
-  updateTurn(turn: number, gameTurn: string): void {
+  updateTurn(turn: number, turnGame: string): void {
+    console.log(`updateTurn: ${turn} ${turnGame}`)
+
+    const index = turn - 1
+
+    this.turns[index].updateGame(turnGame)
     // /!\ supprimer anciens scores si certains présents ?
 
-    if (gameTurn != '') {
-      if (turn > this.turns.length - 1) {
-        this.addTurn(gameTurn)
-      } else {
-        this.turns[turn].updateGame(gameTurn)
-      }
+    if (turn == this.turns.length) {
+      this.addTurn('')
     }
   }
 
-  addTurn(gameTurn: string): boolean {
+  addTurn(turnGame: string): boolean {
     console.log('addTurn')
     let wasAdded = false
 
-    const newTurn = new TurnScores(this.turns[this.turns.length - 1].turn + 1, gameTurn)
+    const newTurn = new TurnScores(this.turns[this.turns.length - 1].turn + 1, turnGame)
     this.players.forEach((player) => newTurn.addPlayer(player.player))
     console.log(newTurn)
 

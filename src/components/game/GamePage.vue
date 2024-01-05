@@ -14,7 +14,7 @@ defineProps<{
 const game = ref(new Game()) // ref() ?
 const tempGameSelector = ref()
 
-// Todo : check reg. if all thos computed are required
+// Todo : check reg. if all those computed are required
 const lastTurn: ComputedRef<TurnScores> = computed(() => game.value.getLastTurn())
 
 const currentPlayerComputed = computed(() => game.value.getCurrentDeciderPlayer())
@@ -28,7 +28,7 @@ function tryAddPlayer(event: any): boolean {
 }
 
 function updateTurnGame(turn: number, turnGame: string) {
-  console.log(turn + '' + turnGame)
+  console.log(`updateTurnGame: ${turn} ${turnGame}`)
   game.value.updateTurn(turn, turnGame)
 }
 
@@ -57,14 +57,12 @@ function load10players() {
     margin-top: 20px;
     margin-bottom: 20px;
   }
-  .header-content {
-  }
 }
 
 #game-table {
   background-color: rgb(209, 209, 209);
-
   border: 1px dashed;
+
   display: grid;
   grid-template-columns: 1fr 3fr;
   grid-template-rows: 2rem 2rem 1fr;
@@ -87,7 +85,6 @@ function load10players() {
   .table-game-selectors {
     background-color: lightgreen;
     grid-area: gameSelectors;
-    width: 10em;
     display: flex;
 
     .index {
@@ -96,8 +93,13 @@ function load10players() {
     }
   }
 
-  /* VARIABLE */
+  /* VARIABLES */
+  --scores-row-width: 5em;
   --scores-row-height: 2rem;
+
+  .score-column {
+    width: var(--scores-row-width);
+  }
 
   .score-row {
     height: var(--scores-row-height);
@@ -121,7 +123,12 @@ function load10players() {
 
     .score {
       height: 70%;
+      width: 80%;
     }
+  }
+
+  .temp {
+    background-color: blueviolet;
   }
 }
 </style>
@@ -157,17 +164,22 @@ function load10players() {
     </div>
 
     <div class="table-game-selectors">
-      <div v-for="turnScores in game.turns" :key="turnScores.turn">
+      <div class="score-column" v-for="turnScores in game.turns" :key="turnScores.turn">
         <span class="index">{{ turnScores.turn }}</span>
-        <Dropdown :options="GamesTypes" class="game" />
+        <Dropdown
+          class="game"
+          :model-value="turnScores.game"
+          :options="GamesTypes"
+          @change="updateTurnGame(turnScores.turn, $event.value)"
+        />
         <!--:onChange="updateTurnGame(turnScores.turn, 'event.value')"-->
       </div>
     </div>
 
     <div class="table-scores">
-      <div v-for="turnScores in game.turns" :key="turnScores.turn">
+      <div class="score-column" v-for="turnScores in game.turns" :key="turnScores.turn">
         <div
-          class="score-row"
+          class="score-row score-column temp"
           v-for="playerScore in turnScores.scores"
           :playerScore="playerScore"
           :key="playerScore.player"
@@ -175,9 +187,9 @@ function load10players() {
           <!--TODO: add 'list' attribute according to selected game-->
           <input
             class="score"
+            type="number"
             v-model="playerScore.score"
             @change="updateTurnPlayerScore(turnScores.turn, playerScore)"
-            type="number"
           />
         </div>
       </div>
