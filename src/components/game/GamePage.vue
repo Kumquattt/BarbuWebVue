@@ -32,8 +32,8 @@ function updateTurnGame(turn: number, turnGame: string) {
   game.value.updateTurn(turn, turnGame)
 }
 
-function updateTurnPlayerScore(turn: number, playerScore: PlayerScore) {
-  console.log(turn + '' + playerScore)
+function updatePlayerTotalScore(player: string) {
+  game.value.updatePlayerTotalScore(player)
 }
 
 function load10players() {
@@ -189,7 +189,7 @@ function load10players() {
             class="score"
             type="number"
             v-model="playerScore.score"
-            @change="updateTurnPlayerScore(turnScores.turn, playerScore)"
+            @change="updatePlayerTotalScore(playerScore.player)"
           />
         </div>
       </div>
@@ -200,7 +200,7 @@ function load10players() {
         :turnScores="turnScores"
         :key="turnScores.turn"
         @update-turn-game="updateTurnGame"
-        @update-turn-player-score="updateTurnPlayerScore"
+        @update-turn-player-score="updatePlayerTotalScore"
       /> -->
       <!--kebab-case converti en CamelCase automatiquement-->
     </div>

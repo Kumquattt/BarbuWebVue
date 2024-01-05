@@ -6,10 +6,11 @@ defineProps<{
 }>()
 </script>
 
-<template>
-  <tr>
-    <span>{{ playerScore.player }} - {{ playerScore.score }}</span>
-  </tr>
-</template>
+<style scoped>
+.scoreRow {
+}
+</style>
 
-<style scoped></style>
+<template>
+  <div class="scoreRow">{{ playerScore.player }} - {{ playerScore.score }}</div>
+</template>

@@ -60,6 +60,22 @@ export class Game {
     return this.turns[this.turns.length - 1]
   }
 
+  updatePlayerTotalScore(player: string) {
+    const totalScore: number = this.turns
+      .map((turn) => turn.getPlayerScore(player))
+      .reduce((tot, current) => tot + current)
+
+    this.players.find((p) => p.player == player)?.setScore(totalScore)
+    console.log(totalScore)
+
+    // const score: number = game.value.turns.map((turn) =>
+    //   turn.scores.filter((score) => (score.player = playerScore.player))
+    // )
+    //:.map((pScore) => pScore.score)
+    //.reduce((total, current) => {return total + current}, 0)
+    // console.log(turn + ' ' + playerScore + ' ' + score)
+  }
+
   getCurrentDeciderPlayer() {
     return this.getLastTurn().deciderPlayer
   }
@@ -112,6 +128,15 @@ export class TurnScores {
     this.game = game
   }
 
+  getPlayerScore(player: string): number {
+    const foundPlayer = this.scores.find((s) => s.player == player)
+    if (foundPlayer) {
+      return foundPlayer.score
+    } else {
+      throw new Error(`getPlayerScore: player '${player} not found'`)
+    }
+  }
+
   toString() {
     return 'Turn ' + this.turn + ' - Game: ' + this.game + ' - Player: ' + this.deciderPlayer
   }
@@ -127,6 +152,10 @@ export class PlayerScore {
 
   is(name: string): boolean {
     return this.player == name
+  }
+
+  setScore(score: number) {
+    this.score = score
   }
 
   toString() {
