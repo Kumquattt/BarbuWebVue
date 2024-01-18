@@ -1,3 +1,5 @@
+import { GameType } from "./GamesTypes"
+
 export class Game {
   id = 'todo'
   date = new Date()
@@ -6,7 +8,7 @@ export class Game {
 
   constructor() {
     //todo include id as param
-    this.turns.push(new TurnScores(1))
+    this.turns.push(new TurnScores(1, GameType.empty))
   }
 
   addPlayer(name: string): boolean {
@@ -34,7 +36,7 @@ export class Game {
 
     const index = turn - 1
 
-    this.turns[index].updateGame(turnGame)
+    this.turns[index].updateGame(GameType.from(turnGame))
     // /!\ supprimer anciens scores si certains présents ?
 
     if (turn == this.turns.length) {
@@ -46,7 +48,7 @@ export class Game {
     console.log('addTurn')
     let wasAdded = false
 
-    const newTurn = new TurnScores(this.turns[this.turns.length - 1].turn + 1, turnGame)
+    const newTurn = new TurnScores(this.turns[this.turns.length - 1].turn + 1, GameType.from(turnGame))
     this.players.forEach((player) => newTurn.addPlayer(player.player))
     console.log(newTurn)
 
@@ -66,7 +68,6 @@ export class Game {
       .reduce((tot, current) => tot + current)
 
     this.players.find((p) => p.player == player)?.setScore(totalScore)
-    console.log(totalScore)
 
     // const score: number = game.value.turns.map((turn) =>
     //   turn.scores.filter((score) => (score.player = playerScore.player))
@@ -74,6 +75,11 @@ export class Game {
     //:.map((pScore) => pScore.score)
     //.reduce((total, current) => {return total + current}, 0)
     // console.log(turn + ' ' + playerScore + ' ' + score)
+  }
+
+  //TODO
+  getRemainingGames(player: string) {
+
   }
 
   getCurrentDeciderPlayer() {
@@ -106,10 +112,10 @@ export class Game {
 export class TurnScores {
   turn = 0 // Pour détecter facilement instanciations hors-constructeur
   deciderPlayer = ''
-  game = '0'
+  game: GameType
   scores: PlayerScore[] = []
 
-  constructor(turn: number, game: string = '?') {
+  constructor(turn: number, game: GameType) {
     this.turn = turn
     this.game = game
   }
@@ -122,7 +128,7 @@ export class TurnScores {
     this.scores.push(new PlayerScore(name))
   }
 
-  updateGame(game: string) {
+  updateGame(game: GameType) {
     //TODO: Add controls, scores must be coherents
     // or reset everything ?
     this.game = game
@@ -131,7 +137,7 @@ export class TurnScores {
   getPlayerScore(player: string): number {
     const foundPlayer = this.scores.find((s) => s.player == player)
     if (foundPlayer) {
-      return foundPlayer.score
+      return this.game.getScore(foundPlayer.score)
     } else {
       throw new Error(`getPlayerScore: player '${player} not found'`)
     }

@@ -4,6 +4,7 @@ import GameTurn from './GameTurn.vue'
 
 import { GamesTypes } from './objectsAndConstants/GamesTypes'
 import { Game, PlayerScore, TurnScores } from './objectsAndConstants/GameClass'
+import { GameType } from './objectsAndConstants/GamesTypes'
 import PlayerScoreRow from './PlayerScoreRow.vue'
 import Dropdown, { type DropdownChangeEvent } from 'primevue/dropdown'
 
@@ -33,16 +34,18 @@ function updateTurnGame(turn: number, turnGame: string) {
 }
 
 function updatePlayerTotalScore(player: string) {
+  console.log(`updatePlayerTotalScore ${player}`)
   game.value.updatePlayerTotalScore(player)
 }
 
-function load10players() {
+function loadXplayers(nb: number) {
   const fakeEvent = { target: { value: '' } }
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < nb; i++) {
     fakeEvent.target.value = 'p' + i
     tryAddPlayer(fakeEvent)
   }
 }
+loadXplayers(1)
 </script>
 
 <style scoped>
@@ -65,7 +68,7 @@ function load10players() {
 
   display: grid;
   grid-template-columns: 1fr 3fr;
-  grid-template-rows: 2rem 2rem 1fr;
+  grid-template-rows: 3rem 5rem 1fr;
   gap: 0px 0px;
   grid-template-areas:
     'filler header'
@@ -94,11 +97,12 @@ function load10players() {
   }
 
   /* VARIABLES */
-  --scores-row-width: 5em;
-  --scores-row-height: 2rem;
+  --scores-row-width: 4rem;
+  --scores-row-height: 3rem;
 
   .score-column {
     width: var(--scores-row-width);
+
   }
 
   .score-row {
@@ -123,7 +127,7 @@ function load10players() {
 
     .score {
       height: 70%;
-      width: 80%;
+      width: 60%;
     }
   }
 
@@ -134,7 +138,7 @@ function load10players() {
 </style>
 
 <template>
-  <div><input type="button" v-on:click="load10players" value="TEST - Add 10 players" /></div>
+  <div><input type="button" v-on:click="loadXplayers(10)" value="TEST - Add 10 players" /></div>
 
   <div class="game-header">
     <div>Tour: {{ currentPlayerComputed }}</div>
@@ -159,6 +163,7 @@ function load10players() {
     </div>
 
     <div class="table-header">
+      <!--TODO: display selecting players for each turn !! -->
       <div>Joueuse: {{}}</div>
       <Dropdown :options="playersComputed" :onChange="console.log('next player')" class="game" />
     </div>
@@ -167,9 +172,9 @@ function load10players() {
       <div class="score-column" v-for="turnScores in game.turns" :key="turnScores.turn">
         <span class="index">{{ turnScores.turn }}</span>
         <Dropdown
-          class="game"
-          :model-value="turnScores.game"
-          :options="GamesTypes"
+          class="score"
+          :model-value="turnScores.game.id"
+          :options="GameType.choices"
           @change="updateTurnGame(turnScores.turn, $event.value)"
         />
         <!--:onChange="updateTurnGame(turnScores.turn, 'event.value')"-->
@@ -179,18 +184,17 @@ function load10players() {
     <div class="table-scores">
       <div class="score-column" v-for="turnScores in game.turns" :key="turnScores.turn">
         <div
-          class="score-row score-column temp"
+          class="score-row temp"
           v-for="playerScore in turnScores.scores"
           :playerScore="playerScore"
           :key="playerScore.player"
         >
-          <!--TODO: add 'list' attribute according to selected game-->
-          <input
-            class="score"
-            type="number"
+          <Dropdown 
+            :options="turnScores.game.possibleScores"
             v-model="playerScore.score"
-            @change="updatePlayerTotalScore(playerScore.player)"
-          />
+            @change="updatePlayerTotalScore(playerScore.player); console.log($event.value)"
+            :disabled="turnScores.game.isNull"
+            class="score"/><!--:model-value="playerScore.score"-->
         </div>
       </div>
 

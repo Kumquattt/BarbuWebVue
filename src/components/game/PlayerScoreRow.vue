@@ -12,5 +12,5 @@ defineProps<{
 </style>
 
 <template>
-  <div class="scoreRow">{{ playerScore.player }} - {{ playerScore.score }}</div>
+  <div class="scoreRow">{{ playerScore.player }}: {{ playerScore.score }}</div>
 </template>
