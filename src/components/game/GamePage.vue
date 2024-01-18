@@ -13,7 +13,6 @@ defineProps<{
 }>()
 
 const game = ref(new Game()) // ref() ?
-const tempGameSelector = ref()
 
 // Todo : check reg. if all those computed are required
 const lastTurn: ComputedRef<TurnScores> = computed(() => game.value.getLastTurn())
@@ -28,9 +27,9 @@ function tryAddPlayer(event: any): boolean {
   return wasAdded
 }
 
-function updateTurnGame(turn: number, turnGame: string) {
-  console.log(`updateTurnGame: ${turn} ${turnGame}`)
-  game.value.updateTurn(turn, turnGame)
+function updateTurnGame(turn: number, gameType: GameType) {
+  console.log(`updateTurnGame: ${turn} ${gameType}`)
+  game.value.updateTurn(turn, gameType)
 }
 
 function updatePlayerTotalScore(player: string) {
@@ -68,7 +67,7 @@ loadXplayers(1)
 
   display: grid;
   grid-template-columns: 1fr 3fr;
-  grid-template-rows: 3rem 5rem 1fr;
+  grid-template-rows: 3rem 4rem 1fr;
   gap: 0px 0px;
   grid-template-areas:
     'filler header'
@@ -80,9 +79,7 @@ loadXplayers(1)
 
     grid-area: header;
     display: flex;
-    div {
-      min-width: 100px;
-    }
+    
   }
 
   .table-game-selectors {
@@ -94,6 +91,9 @@ loadXplayers(1)
       vertical-align: super;
       font-size: 0.75em;
     }
+
+
+    
   }
 
   /* VARIABLES */
@@ -103,6 +103,9 @@ loadXplayers(1)
   .score-column {
     width: var(--scores-row-width);
 
+    .dropdown {
+      max-width: 80%;
+    }
   }
 
   .score-row {
@@ -126,13 +129,28 @@ loadXplayers(1)
     flex-direction: row;
 
     .score {
-      height: 70%;
-      width: 60%;
+      height: 80%;
+      width: 80%;
+
     }
   }
 
-  .temp {
+  .game-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .dropdown {
+      width: 80%;
+      height: 80%;
+    }
+  }
+
+  .player-turn-score {
     background-color: blueviolet;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 </style>
@@ -165,17 +183,19 @@ loadXplayers(1)
     <div class="table-header">
       <!--TODO: display selecting players for each turn !! -->
       <div>Joueuse: {{}}</div>
-      <Dropdown :options="playersComputed" :onChange="console.log('next player')" class="game" />
+      <Dropdown :options="playersComputed" :onChange="console.log('next player')" class="" />
     </div>
 
     <div class="table-game-selectors">
-      <div class="score-column" v-for="turnScores in game.turns" :key="turnScores.turn">
-        <span class="index">{{ turnScores.turn }}</span>
+      <div class="score-column game-selector" v-for="turnScores in game.turns" :key="turnScores.turn">
+        <!-- <span class="index">{{ turnScores.turn }}</span> -->
         <Dropdown
-          class="score"
-          :model-value="turnScores.game.id"
-          :options="GameType.choices"
+          class="dropdown"
+          :modelValue="turnScores.game.id"
+          :options="GameType.types"
+          optionLabel="id"
           @change="updateTurnGame(turnScores.turn, $event.value)"
+          dropdownIcon=null
         />
         <!--:onChange="updateTurnGame(turnScores.turn, 'event.value')"-->
       </div>
@@ -184,13 +204,13 @@ loadXplayers(1)
     <div class="table-scores">
       <div class="score-column" v-for="turnScores in game.turns" :key="turnScores.turn">
         <div
-          class="score-row temp"
+          class="score-row player-turn-score"
           v-for="playerScore in turnScores.scores"
           :playerScore="playerScore"
           :key="playerScore.player"
         >
           <Dropdown 
-            :options="turnScores.game.possibleScores"
+            :options="turnScores.game.possibleScores.map(String)"
             v-model="playerScore.score"
             @change="updatePlayerTotalScore(playerScore.player); console.log($event.value)"
             :disabled="turnScores.game.isNull"

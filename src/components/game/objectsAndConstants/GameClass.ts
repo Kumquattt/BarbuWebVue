@@ -31,12 +31,12 @@ export class Game {
     return this.players.findIndex((ps: PlayerScore) => ps.is(name))
   }
 
-  updateTurn(turn: number, turnGame: string): void {
-    console.log(`updateTurn: ${turn} ${turnGame}`)
+  updateTurn(turn: number, gameType: GameType): void {
+    console.log(`updateTurn: ${turn} ${gameType}`)
 
     const index = turn - 1
 
-    this.turns[index].updateGame(GameType.from(turnGame))
+    this.turns[index].updateGame(gameType)
     // /!\ supprimer anciens scores si certains présents ?
 
     if (turn == this.turns.length) {
