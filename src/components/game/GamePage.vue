@@ -15,7 +15,8 @@ defineProps<{
 const game = ref(new Game()) // ref() ?
 
 // Todo : check reg. if all those computed are required
-const lastTurnGame: ComputedRef<GameType> = computed(() => game.value.getLastTurn().game)
+const lastTurn: ComputedRef<TurnScores> = computed(() => game.value.getLastTurn())
+const lastTurnGame: ComputedRef<GameType> = computed(() => lastTurn.value.game)
 
 // Opti - maybe unec
 const currentPlayerComputed: ComputedRef<string> = computed(() => game.value.getCurrentDeciderPlayer())
@@ -55,6 +56,13 @@ function loadXplayers(nb: number) {
   }
 }
 loadXplayers(1)
+
+function loadXgames(nb: number) {
+  for (let i = 0; i < nb; i++) {
+    game.value.updateTurn(lastTurn.value.turn, GameType.types[0])
+  }
+}
+loadXgames(10)
 </script>
 
 <style scoped>
@@ -81,7 +89,7 @@ loadXplayers(1)
   gap: 0px 0px;
   grid-template-areas:
     'filler header'
-    'filler gameSelectors'
+    'filler scores'
     'players scores';
 
   .table-header {
@@ -101,14 +109,12 @@ loadXplayers(1)
       vertical-align: super;
       font-size: 0.75em;
     }
-
-
-    
   }
 
   /* VARIABLES */
   --scores-row-width: 4rem;
   --scores-row-height: 3rem;
+  --game-selector-height: 4rem;
 
   .score-column {
     width: var(--scores-row-width);
@@ -149,6 +155,7 @@ loadXplayers(1)
     display: flex;
     align-items: center;
     justify-content: center;
+    height: var(--game-selector-height);
 
     .dropdown {
       width: 80%;
@@ -167,6 +174,7 @@ loadXplayers(1)
 
 <template>
   <div><input type="button" v-on:click="loadXplayers(10)" value="TEST - Add 10 players" /></div>
+  <div><input type="button" v-on:click="loadXgames(10)" value="TEST - Add 10 games" /></div>
 
   <div class="game-header">
     <div>Tour: {{ currentPlayerComputed }}</div>
@@ -196,10 +204,14 @@ loadXplayers(1)
       <Dropdown :options="playersComputed" :onChange="console.log('onChange: Dropdown playersComputed ')" class="" />
     </div>
 
-    <div class="table-game-selectors">
+    <div>
+      
+    </div>
+
+    <!-- <div class="table-game-selectors">
       <div class="game-selector score-column" v-for="turnScores in game.turns" :key="turnScores.turn">
-        <!-- <span class="index">{{ turnScores.turn }}</span> -->
-        <!-- TODO: change options to remaining games -->
+        <span class="index">{{ turnScores.turn }}</span> 
+         TODO: change options to remaining games 
         <Dropdown
           class="dropdown"
           v-model="turnScores.game"
@@ -207,12 +219,26 @@ loadXplayers(1)
           optionLabel="id"
           dropdownIcon=null
         />
-        <!--:onChange="updateTurnGame(turnScores.turn, 'event.value')"-->
+        :onChange="updateTurnGame(turnScores.turn, 'event.value')"
       </div>
-    </div>
+    </div> -->
 
     <div class="table-scores">
       <div class="score-column" v-for="turnScores in game.turns" :key="turnScores.turn">
+
+        <!-- <span class="index">{{ turnScores.turn }}</span> -->
+        <!-- TODO: change options to remaining games -->
+        <div class="game-selector">
+          <Dropdown
+            class="dropdown"
+            v-model="turnScores.game"
+            :options="GameType.types"
+            optionLabel="id"
+            dropdownIcon=null
+          />
+        </div>
+        <!--:onChange="updateTurnGame(turnScores.turn, 'event.value')"-->
+
         <div
           class="score-row player-turn-score"
           v-for="playerScore in turnScores.scores"
@@ -229,15 +255,6 @@ loadXplayers(1)
             /><!--:model-value="playerScore.score"-->
         </div>
       </div>
-
-      <!-- <GameTurn
-        class="score-row"
-        v-for="turnScores in game.turns"
-        :turnScores="turnScores"
-        :key="turnScores.turn"
-        @update-turn-game="updateTurnGame"
-        @update-turn-player-score="updatePlayerTotalScore"
-      /> -->
       <!--kebab-case converti en CamelCase automatiquement-->
     </div>
   </div>
