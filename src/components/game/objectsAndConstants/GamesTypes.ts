@@ -22,7 +22,8 @@ export class GameType {
 
   static from(id: string): GameType {
     const found: GameType | undefined = this.types.find(t => id == t.id)
-    if(!found) { throw `ERROR - GameType.from(${id}, id not found.)`}
+    if(!found) { throw `JEROME ERROR - GameType.from(${id}, id not found.)`}
+    
     return found
   }
 

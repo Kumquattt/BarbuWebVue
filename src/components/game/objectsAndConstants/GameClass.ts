@@ -8,7 +8,7 @@ export class Game {
 
   constructor() {
     //todo include id as param
-    this.turns.push(new TurnScores(1, GameType.empty))
+    this.turns.push(new TurnScores(0, GameType.empty))
   }
 
   addPlayer(name: string): boolean {
@@ -32,23 +32,27 @@ export class Game {
   }
 
   updateTurn(turn: number, gameType: GameType): void {
-    console.log(`updateTurn: ${turn} ${gameType}`)
+    console.log(`Game.updateTurn: before update`)
+    console.log(turn)
+    console.log(gameType)
+    console.log(this.turns)
 
-    const index = turn - 1
-
-    this.turns[index].updateGame(gameType)
+    this.turns[turn].updateGame(gameType)
     // /!\ supprimer anciens scores si certains présents ?
 
-    if (turn == this.turns.length) {
+    console.log("Game.updateTurn: after update")
+    console.log(this.turns)
+
+    if (turn == this.turns.length - 1) {
       this.addTurn('')
     }
   }
 
   addTurn(turnGame: string): boolean {
-    console.log('addTurn')
+    console.log(`addTurn: turnGame = ${turnGame}`)
     let wasAdded = false
 
-    const newTurn = new TurnScores(this.turns[this.turns.length - 1].turn + 1, GameType.from(turnGame))
+    const newTurn = new TurnScores(this.turns[this.turns.length - 1].turn + 1, GameType.empty)
     this.players.forEach((player) => newTurn.addPlayer(player.player))
     console.log(newTurn)
 
@@ -91,7 +95,7 @@ export class Game {
   }
 
   getNumberOfTurns() {
-    return this.turns[this.turns.length - 1].turn
+    return this.turns.length
   }
 
   getPlayers() {
@@ -131,6 +135,7 @@ export class TurnScores {
   updateGame(game: GameType) {
     //TODO: Add controls, scores must be coherents
     // or reset everything ?
+    console.log(`TurnScores.updateGame: ${this.turn} ${game.id} (GameType object id)`)
     this.game = game
   }
 

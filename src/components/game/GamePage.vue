@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, type ComputedRef } from 'vue'
+import { computed, ref, type ComputedRef, watch } from 'vue'
 import GameTurn from './GameTurn.vue'
 
 import { GamesTypes } from './objectsAndConstants/GamesTypes'
@@ -15,11 +15,19 @@ defineProps<{
 const game = ref(new Game()) // ref() ?
 
 // Todo : check reg. if all those computed are required
-const lastTurn: ComputedRef<TurnScores> = computed(() => game.value.getLastTurn())
+const lastTurnGame: ComputedRef<GameType> = computed(() => game.value.getLastTurn().game)
 
-const currentPlayerComputed = computed(() => game.value.getCurrentDeciderPlayer())
-const currentGameComputed = computed(() => game.value.getCurrentGame())
-const playersComputed = computed(() => game.value.getPlayers())
+// Opti - maybe unec
+const currentPlayerComputed: ComputedRef<string> = computed(() => game.value.getCurrentDeciderPlayer())
+const currentGameComputed: ComputedRef<GameType> = computed(() => game.value.getCurrentGame())
+const playersComputed: ComputedRef<string[]> = computed(() => game.value.getPlayers())
+
+watch(lastTurnGame, () => {
+  console.log(`DEBUG - watch lastTurnGame, id = ${lastTurnGame.value.id}`)
+  if('' != lastTurnGame.value.id) {
+    game.value.addTurn('')
+  }  
+})
 
 function tryAddPlayer(event: any): boolean {
   const wasAdded = game.value.addPlayer(event.target.value) //TODO warning si déjà présent
@@ -28,7 +36,9 @@ function tryAddPlayer(event: any): boolean {
 }
 
 function updateTurnGame(turn: number, gameType: GameType) {
-  console.log(`updateTurnGame: ${turn} ${gameType}`)
+  console.log(`MAIN updateTurnGame:`)
+  console.log(turn)
+  console.log(gameType)
   game.value.updateTurn(turn, gameType)
 }
 
@@ -182,19 +192,19 @@ loadXplayers(1)
 
     <div class="table-header">
       <!--TODO: display selecting players for each turn !! -->
-      <div>Joueuse: {{}}</div>
-      <Dropdown :options="playersComputed" :onChange="console.log('next player')" class="" />
+      <div>Joueuse: {{currentPlayerComputed}} </div>
+      <Dropdown :options="playersComputed" :onChange="console.log('onChange: Dropdown playersComputed ')" class="" />
     </div>
 
     <div class="table-game-selectors">
-      <div class="score-column game-selector" v-for="turnScores in game.turns" :key="turnScores.turn">
+      <div class="game-selector score-column" v-for="turnScores in game.turns" :key="turnScores.turn">
         <!-- <span class="index">{{ turnScores.turn }}</span> -->
+        <!-- TODO: change options to remaining games -->
         <Dropdown
           class="dropdown"
-          :modelValue="turnScores.game.id"
+          v-model="turnScores.game"
           :options="GameType.types"
           optionLabel="id"
-          @change="updateTurnGame(turnScores.turn, $event.value)"
           dropdownIcon=null
         />
         <!--:onChange="updateTurnGame(turnScores.turn, 'event.value')"-->
@@ -210,11 +220,13 @@ loadXplayers(1)
           :key="playerScore.player"
         >
           <Dropdown 
-            :options="turnScores.game.possibleScores.map(String)"
+            class="score"
             v-model="playerScore.score"
+            :options="turnScores.game.possibleScores.map(String)"
             @change="updatePlayerTotalScore(playerScore.player); console.log($event.value)"
             :disabled="turnScores.game.isNull"
-            class="score"/><!--:model-value="playerScore.score"-->
+            dropdownIcon=null
+            /><!--:model-value="playerScore.score"-->
         </div>
       </div>
 
@@ -229,6 +241,8 @@ loadXplayers(1)
       <!--kebab-case converti en CamelCase automatiquement-->
     </div>
   </div>
+  
+  <div style="margin-top: 50px">{{ game.turns.flatMap(t => `${t.turn} ${t.game.id}`) }}</div>
 
   <div style="margin-top: 50px">{{ game }}</div>
 </template>
