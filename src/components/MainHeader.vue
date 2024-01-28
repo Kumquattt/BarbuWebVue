@@ -1,11 +1,10 @@
 <script setup lang="ts">
-defineProps<{
-  msg: string
-}>()
+import MenuItem from './MenuItem.vue'
+import DocumentationIcon from './icons/IconDocumentation.vue'
 </script>
 
 <template>
-  <div></div>
-</template>
+  
+  <p>HEADER COMPONENT</p>
 
-<style scoped></style>
+</template>

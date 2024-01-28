@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, type ComputedRef, watch } from 'vue'
+import Button from "primevue/button";
 import GameTurn from './GameTurn.vue'
 
 import { GamesTypes } from './objectsAndConstants/GamesTypes'
