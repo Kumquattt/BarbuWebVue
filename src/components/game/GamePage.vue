@@ -55,7 +55,7 @@ function loadXplayers(nb: number) {
     tryAddPlayer(fakeEvent)
   }
 }
-loadXplayers(1)
+loadXplayers(20)
 
 function loadXgames(nb: number) {
   for (let i = 0; i < nb; i++) {
@@ -113,7 +113,7 @@ loadXgames(10)
 
   /* VARIABLES */
   --scores-row-width: 4rem;
-  --scores-row-height: 3rem;
+  --scores-row-height: 5rem;
   --game-selector-height: 4rem;
 
   .score-column {
@@ -135,6 +135,25 @@ loadXgames(10)
 
     display: flex;
     flex-direction: column;
+
+    .player {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 1.5rem;
+
+      .player-name {
+        padding: 10px;
+        color: rgb(26, 26, 26);
+      }
+
+      .player-score {
+        padding: 10px;
+        font-family: 'Consolas', 'Courier New', Courier, monospace;
+      }
+    }
+    
+
   }
 
   .table-scores {
@@ -143,6 +162,8 @@ loadXgames(10)
     grid-area: scores;
     display: flex;
     flex-direction: row;
+
+    overflow: scroll;
 
     .score {
       height: 80%;
@@ -184,13 +205,20 @@ loadXgames(10)
   <div id="game-table">
     <div class="filler"></div>
 
+    <div class="table-header">
+      <!--TODO: display selecting players for each turn !! -->
+      <div>Joueuse: {{currentPlayerComputed}} </div>
+      <Dropdown :options="playersComputed" :onChange="console.log('onChange: Dropdown playersComputed ')" class="" />
+    </div>
+
     <div class="table-players">
-      <PlayerScoreRow
-        class="score-row"
+      <div class="player score-row"
         v-for="playerScore in game.players"
         :playerScore="playerScore"
         :key="playerScore.player"
-      />
+      >
+      <span class="player-name">{{ playerScore.player }}</span> <span class="player-score">{{ playerScore.score }}</span>
+    </div>
       <input
         class="input-add-player score-row"
         v-on:blur="tryAddPlayer"
@@ -198,32 +226,8 @@ loadXgames(10)
       />
     </div>
 
-    <div class="table-header">
-      <!--TODO: display selecting players for each turn !! -->
-      <div>Joueuse: {{currentPlayerComputed}} </div>
-      <Dropdown :options="playersComputed" :onChange="console.log('onChange: Dropdown playersComputed ')" class="" />
-    </div>
-
-    <div>
-      
-    </div>
-
-    <!-- <div class="table-game-selectors">
-      <div class="game-selector score-column" v-for="turnScores in game.turns" :key="turnScores.turn">
-        <span class="index">{{ turnScores.turn }}</span> 
-         TODO: change options to remaining games 
-        <Dropdown
-          class="dropdown"
-          v-model="turnScores.game"
-          :options="GameType.types"
-          optionLabel="id"
-          dropdownIcon=null
-        />
-        :onChange="updateTurnGame(turnScores.turn, 'event.value')"
-      </div>
-    </div> -->
-
     <div class="table-scores">
+      
       <div class="score-column" v-for="turnScores in game.turns" :key="turnScores.turn">
 
         <!-- <span class="index">{{ turnScores.turn }}</span> -->
