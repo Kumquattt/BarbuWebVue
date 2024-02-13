@@ -1,0 +1,120 @@
+* {
+  /* border: 1px dashed green; */
+}
+
+.game-header {
+  display: flex;
+  div {
+    min-width: 100px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+}
+
+#game-table {
+  /* background-color: rgb(209, 209, 209); */
+  border: 1px dashed;
+
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  grid-template-rows: 3rem 4rem 1fr;
+  gap: 0px 0px;
+  grid-template-areas:
+    'filler header'
+    'filler scores'
+    'players scores';
+
+  .table-header {
+    /* background-color: aqua; */
+
+    grid-area: header;
+    display: flex;
+  }
+
+  .table-game-selectors {
+    /* background-color: lightgreen; */
+    grid-area: gameSelectors;
+    display: flex;
+
+    .index {
+      vertical-align: super;
+      font-size: 0.75em;
+    }
+  }
+
+  /* VARIABLES */
+  --scores-row-width: 4rem;
+  --scores-row-height: 5rem;
+  --game-selector-height: 4rem;
+
+  .score-column {
+    width: var(--scores-row-width);
+
+    .dropdown {
+      max-width: 80%;
+    }
+  }
+
+  .score-row {
+    height: var(--scores-row-height);
+  }
+
+  .table-players {
+    /* background-color: lightsalmon; */
+
+    grid-area: players;
+
+    display: flex;
+    flex-direction: column;
+
+    .player {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 1.5rem;
+
+      .player-name {
+        padding: 10px;
+      }
+
+      .player-score {
+        padding: 10px;
+        font-family: 'Consolas', 'Courier New', Courier, monospace;
+      }
+    }
+  }
+
+  .table-scores {
+    /* background-color: lightyellow; */
+
+    grid-area: scores;
+    display: flex;
+    flex-direction: row;
+
+    overflow: scroll;
+
+    .score {
+      height: 80%;
+      width: 80%;
+    }
+  }
+
+  .game-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--game-selector-height);
+
+    .dropdown {
+      width: 80%;
+      height: 80%;
+    }
+  }
+
+  .player-turn-score {
+    /* background-color: blueviolet; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

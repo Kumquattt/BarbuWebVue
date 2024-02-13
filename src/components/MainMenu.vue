@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import MenuItem from './MenuItem.vue'
 import DocumentationIcon from './icons/IconDocumentation.vue'
+
+import Button from 'primevue/button'
 </script>
 
 <template>
-  <MenuItem>
+  <header>
+    <div class="wrapper"></div>
+  </header>
+
+  <!-- <MenuItem>
     <template #icon>
       <DocumentationIcon />
     </template>
@@ -16,5 +22,5 @@ import DocumentationIcon from './icons/IconDocumentation.vue'
       <DocumentationIcon />
     </template>
     <template #heading>Parties</template>
-  </MenuItem>
+  </MenuItem> -->
 </template>

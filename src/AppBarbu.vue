@@ -2,27 +2,22 @@
 import MainHeader from './components/MainHeader.vue'
 import MainMenu from './components/MainMenu.vue'
 import GamePageVue from './components/game/GamePage.vue'
-import Button from 'primevue/button';
+
+import Button from 'primevue/button'
 </script>
 
-<style>
-
-</style>
+<style></style>
 
 <template>
-  <header>
-    <div class="wrapper">
-      <MainHeader msg="BARBU" />
-      <Button><router-link to="/">Home</router-link></Button>
-      <Button><router-link to="/menu">Menu</router-link></Button>
-      <Button><router-link to="/game">Game</router-link></Button>
-      <Button><router-link to="/test">Test</router-link></Button>
-    </div>
-  </header>
-
   <main>
+    <MainHeader msg="BARBU" />
     <!-- <GamePageVue msg="test" /> -->
-    <router-view></router-view>
+    <router-link to="/"><Button>Home</Button></router-link>
+    <router-link to="/menu"><Button>Menu</Button></router-link>
+    <router-link to="/game"><Button>Game</Button></router-link>
+    <router-link to="/test"><Button>Test</Button></router-link>
+
+    <router-view />
   </main>
 </template>
 
