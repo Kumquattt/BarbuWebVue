@@ -4,7 +4,5 @@ import DocumentationIcon from './icons/IconDocumentation.vue'
 </script>
 
 <template>
-  
-  <p>HEADER COMPONENT</p>
-
+  <p>BARBU - Compteur de points</p>
 </template>
