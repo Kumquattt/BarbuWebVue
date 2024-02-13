@@ -1,6 +1,5 @@
-* {
-  /* border: 1px dashed green; */
-}
+/* TODO: VARIABILISER & UNIFORMISER */
+/* Objectif: slider zoom */
 
 .game-header {
   display: flex;
@@ -20,9 +19,14 @@
   grid-template-rows: 3rem 4rem 1fr;
   gap: 0px 0px;
   grid-template-areas:
-    'filler header'
+    'filler scores'
     'filler scores'
     'players scores';
+
+  /* grid-template-areas:
+    'filler header'
+    'filler scores'
+    'players scores'; */
 
   .table-header {
     /* background-color: aqua; */
@@ -31,19 +35,8 @@
     display: flex;
   }
 
-  .table-game-selectors {
-    /* background-color: lightgreen; */
-    grid-area: gameSelectors;
-    display: flex;
-
-    .index {
-      vertical-align: super;
-      font-size: 0.75em;
-    }
-  }
-
   /* VARIABLES */
-  --scores-row-width: 4rem;
+  --scores-row-width: 8rem;
   --scores-row-height: 5rem;
   --game-selector-height: 4rem;
 
@@ -51,7 +44,7 @@
     width: var(--scores-row-width);
 
     .dropdown {
-      max-width: 80%;
+      width: 80%;
     }
   }
 
@@ -62,25 +55,35 @@
   .table-players {
     /* background-color: lightsalmon; */
 
+    --base-font-size: 1.5rem;
+
     grid-area: players;
 
     display: flex;
     flex-direction: column;
+    width: calc(var(--scores-row-width) * 2);
+
+    font-size: var(--base-font-size);
 
     .player {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 1.5rem;
 
       .player-name {
         padding: 10px;
+        max-width: 60%;
+        overflow: scroll;
       }
 
       .player-score {
         padding: 10px;
         font-family: 'Consolas', 'Courier New', Courier, monospace;
       }
+    }
+
+    .input-add-player {
+      font-size: var(--base-font-size);
     }
   }
 
@@ -99,7 +102,7 @@
     }
   }
 
-  .game-selector {
+  .game-player-selector {
     display: flex;
     align-items: center;
     justify-content: center;

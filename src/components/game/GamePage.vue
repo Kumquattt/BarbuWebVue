@@ -67,7 +67,7 @@ function loadXgames(nb: number) {
     game.value.updateTurn(lastTurn.value.turn, GameType.types[0])
   }
 }
-loadXgames(10)
+// loadXgames(10)
 </script>
 
 <style scoped></style>
