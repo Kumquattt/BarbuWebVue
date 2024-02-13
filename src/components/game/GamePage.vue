@@ -9,16 +9,22 @@ import { GameType } from './objectsAndConstants/GamesTypes'
 import PlayerScoreRow from './PlayerScoreRow.vue'
 import Dropdown, { type DropdownChangeEvent } from 'primevue/dropdown'
 
+import Slider from 'primevue/slider'
+
 import './GamePage.css'
 
 defineProps<{
   msg: string // Name later ?
 }>()
 
+// TEMP
+const value = ref(20)
+
 const game = ref(new Game()) // ref() ?
 
 // Todo : check reg. if all those computed are required
 const lastTurn: ComputedRef<TurnScores> = computed(() => game.value.getLastTurn())
+const lastPlayingTurn: ComputedRef<TurnScores> = computed(() => game.value.getLastPlayingTurn())
 const lastTurnGame: ComputedRef<GameType> = computed(() => lastTurn.value.game)
 
 // Opti - maybe unec
@@ -28,8 +34,9 @@ const currentPlayerComputed: ComputedRef<string> = computed(() =>
 const currentGameComputed: ComputedRef<GameType> = computed(() => game.value.getCurrentGame())
 const playersComputed: ComputedRef<string[]> = computed(() => game.value.getPlayers())
 
+// ADD GAMES
 watch(lastTurnGame, () => {
-  console.log(`DEBUG - watch lastTurnGame, id = ${lastTurnGame.value.id}`)
+  // console.log(`DEBUG - watch lastTurn, id = ${lastTurnGame.value.id}`)
   if ('' != lastTurnGame.value.id) {
     game.value.addTurn('')
   }
@@ -39,13 +46,6 @@ function tryAddPlayer(event: any): boolean {
   const wasAdded = game.value.addPlayer(event.target.value) //TODO warning si déjà présent
   event.target.value = ''
   return wasAdded
-}
-
-function updateTurnGame(turn: number, gameType: GameType) {
-  console.log(`MAIN updateTurnGame:`)
-  console.log(turn)
-  console.log(gameType)
-  game.value.updateTurn(turn, gameType)
 }
 
 function updatePlayerTotalScore(player: string) {
@@ -60,7 +60,7 @@ function loadXplayers(nb: number) {
     tryAddPlayer(fakeEvent)
   }
 }
-loadXplayers(20)
+// loadXplayers(3)
 
 function loadXgames(nb: number) {
   for (let i = 0; i < nb; i++) {
@@ -72,13 +72,14 @@ loadXgames(10)
 
 <style scoped></style>
 
+<!-- TODO Sub components -->
 <template>
-  <div><input type="button" v-on:click="loadXplayers(10)" value="TEST - Add 10 players" /></div>
-  <div><input type="button" v-on:click="loadXgames(10)" value="TEST - Add 10 games" /></div>
+  <!-- <div><input type="button" v-on:click="loadXplayers(10)" value="TEST - Add 10 players" /></div>
+  <div><input type="button" v-on:click="loadXgames(10)" value="TEST - Add 10 games" /></div> -->
 
   <div class="game-header">
     <div>Tour: {{ currentPlayerComputed }}</div>
-    <div>Jeu: {{ currentGameComputed }}</div>
+    <div>Jeu: {{ currentGameComputed.label }}</div>
   </div>
 
   <div id="game-table">
@@ -86,12 +87,12 @@ loadXgames(10)
 
     <div class="table-header">
       <!--TODO: display selecting players for each turn !! -->
-      <div>Joueuse: {{ currentPlayerComputed }}</div>
-      <Dropdown
+      <!-- <div>Joueuse: {{ currentPlayerComputed }}</div> -->
+      <!-- <Dropdown
         :options="playersComputed"
         :onChange="console.log('onChange: Dropdown playersComputed ')"
         class=""
-      />
+      /> -->
     </div>
 
     <div class="table-players">
@@ -115,12 +116,21 @@ loadXgames(10)
       <div class="score-column" v-for="turnScores in game.turns" :key="turnScores.turn">
         <!-- <span class="index">{{ turnScores.turn }}</span> -->
         <!-- TODO: change options to remaining games -->
-        <div class="game-selector">
+        <div class="game-player-selector">
           <Dropdown
+            v-model="turnScores.deciderPlayer"
+            :options="playersComputed"
+            :onChange="console.log('onChange: Dropdown playersComputed ')"
             class="dropdown"
+            dropdownIcon="null"
+          />
+        </div>
+        <div class="game-player-selector">
+          <Dropdown
             v-model="turnScores.game"
             :options="GameType.types"
             optionLabel="id"
+            class="dropdown"
             dropdownIcon="null"
           />
         </div>
@@ -146,7 +156,7 @@ loadXgames(10)
     </div>
   </div>
 
-  <div style="margin-top: 50px">{{ game.turns.flatMap((t) => `${t.turn} ${t.game.id}`) }}</div>
+  <!-- <div style="margin-top: 50px">{{ game.turns.flatMap((t) => `${t.turn} ${t.game.id}`) }}</div>
 
-  <div style="margin-top: 50px">{{ game }}</div>
+  <div style="margin-top: 50px">{{ game }}</div> -->
 </template>

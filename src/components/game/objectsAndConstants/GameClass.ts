@@ -1,4 +1,4 @@
-import { GameType } from "./GamesTypes"
+import { GameType } from './GamesTypes'
 
 export class Game {
   id = 'todo'
@@ -8,7 +8,7 @@ export class Game {
 
   constructor() {
     //todo include id as param
-    this.turns.push(new TurnScores(0, GameType.empty))
+    this.turns.push(TurnScores.empty())
   }
 
   addPlayer(name: string): boolean {
@@ -40,7 +40,7 @@ export class Game {
     this.turns[turn].updateGame(gameType)
     // /!\ supprimer anciens scores si certains présents ?
 
-    console.log("Game.updateTurn: after update")
+    console.log('Game.updateTurn: after update')
     console.log(this.turns)
 
     if (turn == this.turns.length - 1) {
@@ -62,8 +62,26 @@ export class Game {
     return wasAdded
   }
 
-  getLastTurn() {
+  getLastTurn(): TurnScores {
+    // console.group('TurnScores getLastTurn')
+    // console.log(this.turns[this.turns.length - 1])
+    // console.groupEnd()
     return this.turns[this.turns.length - 1]
+  }
+
+  getLastPlayingTurn(): TurnScores {
+    const nbOfTurns: number = this.getNumberOfTurns()
+    let lastTurn: TurnScores = this.turns[this.turns.length - 1]
+
+    if (nbOfTurns > 1) {
+      lastTurn = this.turns[this.turns.length - 2]
+    }
+
+    // console.group('TurnScores getLastPlayingTurn')
+    // console.log(lastTurn)
+    // console.groupEnd()
+
+    return lastTurn
   }
 
   updatePlayerTotalScore(player: string) {
@@ -82,16 +100,14 @@ export class Game {
   }
 
   //TODO
-  getRemainingGames(player: string) {
-
-  }
+  getRemainingGames(player: string) {}
 
   getCurrentDeciderPlayer() {
-    return this.getLastTurn().deciderPlayer
+    return this.getLastPlayingTurn().deciderPlayer
   }
 
   getCurrentGame() {
-    return this.getLastTurn().game
+    return this.getLastPlayingTurn().game
   }
 
   getNumberOfTurns() {
@@ -99,7 +115,7 @@ export class Game {
   }
 
   getPlayers() {
-    console.log(this.players.map((p) => p.player))
+    // console.log(this.players.map((p) => p.player))
     return this.players.map((p) => p.player)
   }
 
@@ -114,7 +130,7 @@ export class Game {
 }
 
 export class TurnScores {
-  turn = 0 // Pour détecter facilement instanciations hors-constructeur
+  turn = 0 // Pour détecter instanciations hors-constructeur
   deciderPlayer = ''
   game: GameType
   scores: PlayerScore[] = []
@@ -122,6 +138,10 @@ export class TurnScores {
   constructor(turn: number, game: GameType) {
     this.turn = turn
     this.game = game
+  }
+
+  static empty(): TurnScores {
+    return new TurnScores(0, GameType.empty)
   }
 
   isPresent(name: string): boolean {

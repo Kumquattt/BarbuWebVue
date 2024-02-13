@@ -12,10 +12,10 @@ import Button from 'primevue/button'
   <main>
     <MainHeader msg="BARBU" />
     <!-- <GamePageVue msg="test" /> -->
-    <router-link to="/"><Button>Home</Button></router-link>
+    <!-- <router-link to="/"><Button>Home</Button></router-link>
     <router-link to="/menu"><Button>Menu</Button></router-link>
     <router-link to="/game"><Button>Game</Button></router-link>
-    <router-link to="/test"><Button>Test</Button></router-link>
+    <router-link to="/test"><Button>Test</Button></router-link> -->
 
     <router-view />
   </main>
