@@ -20,7 +20,9 @@ defineProps<{
 
 const gameStore = useLocalStorage('game-storage', new Game())
 const game: Ref<Game> = ref(gameStore.value ? Game.from(gameStore.value) : new Game())
-watch(game, (g) => gameStore.value = g)
+watch(game, (g) => {
+  console.log(g)
+  gameStore.value = g})
 function reset() {game.value = new Game()}
 
 // Todo : check reg. if all those computed are required
@@ -48,6 +50,7 @@ watch(lastTurnGame, () => {
 function tryAddPlayer(event: any): boolean {
   const wasAdded = game.value.addPlayer(event.target.value) //TODO warning si déjà présent
   event.target.value = ''
+  gameStore.value = game.value;
   return wasAdded
 }
 
