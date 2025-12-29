@@ -35,6 +35,8 @@ const currentPlayerComputed: ComputedRef<string> = computed(() =>
 const currentGameComputed: ComputedRef<GameType> = computed(() => game.value.getCurrentGame())
 const playersComputed: ComputedRef<string[]> = computed(() => game.value.getPlayers())
 
+var leftMenuReduced = ref(false);
+
 // ADD GAMES
 watch(lastTurnGame, () => {
   //console.log(`DEBUG - watch lastTurn, id = ${lastTurnGame.value.id}`)
@@ -52,6 +54,11 @@ function tryAddPlayer(event: any): boolean {
 function updatePlayerTotalScore(player: string) {
   //console.log(`updatePlayerTotalScore ${player}`)
   game.value.updatePlayerTotalScore(player)
+}
+
+function toggleExpand() {
+  leftMenuReduced.value = !leftMenuReduced.value;
+  console.log("menu reduced = " + leftMenuReduced.value);
 }
 
 function loadXplayers(nb: number) {
@@ -85,7 +92,7 @@ function loadXgames(nb: number) {
   </div>
 
   <div id="game-table">
-    <div class="filler"></div>
+    <div class="hamburger" v-on:click="toggleExpand">☰</div>
 
     <div class="table-header">
       <!--TODO: display selecting players for each turn !! -->
@@ -97,7 +104,7 @@ function loadXgames(nb: number) {
       /> -->
     </div>
 
-    <div class="table-players">
+    <div class="table-players" :class="{ 'reduced': leftMenuReduced, 'expanded': !leftMenuReduced}">
       <div
         class="player score-row"
         v-for="playerScore in game.players"
