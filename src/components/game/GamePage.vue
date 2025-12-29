@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, type ComputedRef, watch } from 'vue'
+import { computed, ref, type ComputedRef, watch, type Ref } from 'vue'
 import Button from 'primevue/button'
 import GameTurn from './GameTurn.vue'
 
@@ -8,6 +8,7 @@ import { Game, PlayerScore, TurnScores } from './objectsAndConstants/GameClass'
 import { GameType } from './objectsAndConstants/GamesTypes'
 import PlayerScoreRow from './PlayerScoreRow.vue'
 import Dropdown, { type DropdownChangeEvent } from 'primevue/dropdown'
+import { useLocalStorage } from '@vueuse/core' 
 
 import Slider from 'primevue/slider'
 
@@ -17,10 +18,10 @@ defineProps<{
   msg: string // Name later ?
 }>()
 
-// TEMP
-const value = ref(20)
-
-const game = ref(new Game()) // ref() ?
+const gameStore = useLocalStorage('game-storage', new Game())
+const game: Ref<Game> = ref(gameStore.value ? Game.from(gameStore.value) : new Game())
+watch(game, (g) => gameStore.value = g)
+function reset() {game.value = new Game()}
 
 // Todo : check reg. if all those computed are required
 const lastTurn: ComputedRef<TurnScores> = computed(() => game.value.getLastTurn())
@@ -36,7 +37,7 @@ const playersComputed: ComputedRef<string[]> = computed(() => game.value.getPlay
 
 // ADD GAMES
 watch(lastTurnGame, () => {
-  // console.log(`DEBUG - watch lastTurn, id = ${lastTurnGame.value.id}`)
+  //console.log(`DEBUG - watch lastTurn, id = ${lastTurnGame.value.id}`)
   if ('' != lastTurnGame.value.id) {
     game.value.addTurn('')
   }
@@ -49,7 +50,7 @@ function tryAddPlayer(event: any): boolean {
 }
 
 function updatePlayerTotalScore(player: string) {
-  console.log(`updatePlayerTotalScore ${player}`)
+  //console.log(`updatePlayerTotalScore ${player}`)
   game.value.updatePlayerTotalScore(player)
 }
 
@@ -80,6 +81,7 @@ function loadXgames(nb: number) {
   <div class="game-header">
     <div>Tour: {{ currentPlayerComputed }}</div>
     <div>Jeu: {{ currentGameComputed.label }}</div>
+    <div><button v-on:click="reset">Reset</button></div>
   </div>
 
   <div id="game-table">

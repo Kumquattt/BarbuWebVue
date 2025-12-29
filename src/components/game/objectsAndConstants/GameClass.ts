@@ -11,6 +11,17 @@ export class Game {
     this.turns.push(TurnScores.empty())
   }
 
+  static from(storedGame: Game): Game {
+    const newGame = new Game();
+    
+    newGame.id = storedGame.id,
+    newGame.date = storedGame.date
+    newGame.players = storedGame.players.map(p => PlayerScore.from(p))
+    newGame.turns = storedGame.turns.map(t => TurnScores.from(t))
+
+    return newGame;
+  }
+
   addPlayer(name: string): boolean {
     let wasAdded: boolean = true
     if (name.length == 0 || this.currentPlayers().includes(name)) {
@@ -32,16 +43,16 @@ export class Game {
   }
 
   updateTurn(turn: number, gameType: GameType): void {
-    console.log(`Game.updateTurn: before update`)
-    console.log(turn)
-    console.log(gameType)
-    console.log(this.turns)
+    //console.log(`Game.updateTurn: before update`)
+    //console.log(turn)
+    //console.log(gameType)
+    //console.log(this.turns)
 
     this.turns[turn].updateGame(gameType)
     // /!\ supprimer anciens scores si certains présents ?
 
-    console.log('Game.updateTurn: after update')
-    console.log(this.turns)
+    //console.log('Game.updateTurn: after update')
+    //console.log(this.turns)
 
     if (turn == this.turns.length - 1) {
       this.addTurn('')
@@ -49,12 +60,12 @@ export class Game {
   }
 
   addTurn(turnGame: string): boolean {
-    console.log(`addTurn: turnGame = ${turnGame}`)
+    //console.log(`addTurn: turnGame = ${turnGame}`)
     let wasAdded = false
 
     const newTurn = new TurnScores(this.turns[this.turns.length - 1].turn + 1, GameType.empty)
     this.players.forEach((player) => newTurn.addPlayer(player.player))
-    console.log(newTurn)
+    //console.log(newTurn)
 
     this.turns.push(newTurn)
 
@@ -140,6 +151,13 @@ export class TurnScores {
     this.game = game
   }
 
+  static from(newTurn: TurnScores): TurnScores {
+    const t = new TurnScores(newTurn.turn, newTurn.game)
+    t.deciderPlayer = newTurn.deciderPlayer;
+    t.scores = newTurn.scores;
+    return t;
+  }
+
   static empty(): TurnScores {
     return new TurnScores(0, GameType.empty)
   }
@@ -179,6 +197,12 @@ export class PlayerScore {
 
   constructor(name: string) {
     this.player = name
+  }
+
+  static from(storedPlayer: PlayerScore){
+    const p = new PlayerScore(storedPlayer.player);
+    p.score = storedPlayer.score;
+    return p;
   }
 
   is(name: string): boolean {
