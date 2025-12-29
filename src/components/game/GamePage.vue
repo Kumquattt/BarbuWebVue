@@ -15,7 +15,6 @@ import Slider from 'primevue/slider'
 import './GamePage.css'
 
 defineProps<{
-  msg: string // Name later ?
 }>()
 
 const gameStore = useLocalStorage('game-storage', new Game())
@@ -57,6 +56,7 @@ function tryAddPlayer(event: any): boolean {
 function updatePlayerTotalScore(player: string) {
   //console.log(`updatePlayerTotalScore ${player}`)
   game.value.updatePlayerTotalScore(player)
+  gameStore.value = game.value
 }
 
 function toggleExpand() {

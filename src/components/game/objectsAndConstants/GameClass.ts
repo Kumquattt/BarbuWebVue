@@ -154,7 +154,7 @@ export class TurnScores {
   static from(newTurn: TurnScores): TurnScores {
     const t = new TurnScores(newTurn.turn, newTurn.game)
     t.deciderPlayer = newTurn.deciderPlayer;
-    t.scores = newTurn.scores;
+    t.scores = newTurn.scores.map(s => PlayerScore.from(s));
     return t;
   }
 
