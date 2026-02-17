@@ -118,7 +118,7 @@ export class Game {
   }
 
   getCurrentGame() {
-    return this.getLastPlayingTurn().game
+    return this.getLastPlayingTurn().gameType
   }
 
   getNumberOfTurns() {
@@ -143,17 +143,20 @@ export class Game {
 export class TurnScores {
   turn = 0 // Pour détecter instanciations hors-constructeur
   deciderPlayer = ''
-  game: GameType
+  gameType: GameType
   scores: PlayerScore[] = []
 
   constructor(turn: number, game: GameType) {
     this.turn = turn
-    this.game = game
+    this.gameType = game
   }
 
   static from(newTurn: TurnScores): TurnScores {
-    const t = new TurnScores(newTurn.turn, newTurn.game)
+    const t = new TurnScores(newTurn.turn, newTurn.gameType)
     t.deciderPlayer = newTurn.deciderPlayer;
+    if(newTurn.gameType.id != ""){
+      t.gameType = GameType.from(newTurn.gameType.id)
+    }
     t.scores = newTurn.scores.map(s => PlayerScore.from(s));
     return t;
   }
@@ -174,20 +177,20 @@ export class TurnScores {
     //TODO: Add controls, scores must be coherents
     // or reset everything ?
     console.log(`TurnScores.updateGame: ${this.turn} ${game.id} (GameType object id)`)
-    this.game = game
+    this.gameType = game
   }
 
   getPlayerScore(player: string): number {
     const foundPlayer = this.scores.find((s) => s.player == player)
     if (foundPlayer) {
-      return this.game.getScore(foundPlayer.score)
+      return this.gameType.getScore(foundPlayer.score)
     } else {
       throw new Error(`getPlayerScore: player '${player} not found'`)
     }
   }
 
   toString() {
-    return 'Turn ' + this.turn + ' - Game: ' + this.game + ' - Player: ' + this.deciderPlayer
+    return 'Turn ' + this.turn + ' - Game: ' + this.gameType + ' - Player: ' + this.deciderPlayer
   }
 }
 

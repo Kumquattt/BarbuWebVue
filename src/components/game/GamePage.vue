@@ -1,16 +1,11 @@
 <script setup lang="ts">
-import { computed, ref, type ComputedRef, watch, type Ref } from 'vue'
-import Button from 'primevue/button'
-import GameTurn from './GameTurn.vue'
+import { computed, ref, watch, type ComputedRef, type Ref } from 'vue'
 
-import { GamesTypes } from './objectsAndConstants/GamesTypes'
-import { Game, PlayerScore, TurnScores } from './objectsAndConstants/GameClass'
+import { useLocalStorage } from '@vueuse/core'
+import Dropdown from 'primevue/dropdown'
+import { Game, TurnScores } from './objectsAndConstants/GameClass'
 import { GameType } from './objectsAndConstants/GamesTypes'
-import PlayerScoreRow from './PlayerScoreRow.vue'
-import Dropdown, { type DropdownChangeEvent } from 'primevue/dropdown'
-import { useLocalStorage } from '@vueuse/core' 
 
-import Slider from 'primevue/slider'
 
 import './GamePage.css'
 
@@ -22,12 +17,15 @@ const game: Ref<Game> = ref(gameStore.value ? Game.from(gameStore.value) : new G
 watch(game, (g) => {
   console.log(g)
   gameStore.value = g})
+function saveStorage() {
+  gameStore.value = game.value;
+}
 function reset() {game.value = new Game()}
 
 // Todo : check reg. if all those computed are required
 const lastTurn: ComputedRef<TurnScores> = computed(() => game.value.getLastTurn())
 const lastPlayingTurn: ComputedRef<TurnScores> = computed(() => game.value.getLastPlayingTurn())
-const lastTurnGame: ComputedRef<GameType> = computed(() => lastTurn.value.game)
+const lastTurnGame: ComputedRef<GameType> = computed(() => lastTurn.value.gameType)
 
 // Opti - maybe unec
 const currentPlayerComputed: ComputedRef<string> = computed(() =>
@@ -49,14 +47,14 @@ watch(lastTurnGame, () => {
 function tryAddPlayer(event: any): boolean {
   const wasAdded = game.value.addPlayer(event.target.value) //TODO warning si déjà présent
   event.target.value = ''
-  gameStore.value = game.value;
+  saveStorage();
   return wasAdded
 }
 
 function updatePlayerTotalScore(player: string) {
   //console.log(`updatePlayerTotalScore ${player}`)
   game.value.updatePlayerTotalScore(player)
-  gameStore.value = game.value
+  saveStorage();
 }
 
 function toggleExpand() {
@@ -132,14 +130,14 @@ function loadXgames(nb: number) {
           <Dropdown
             v-model="turnScores.deciderPlayer"
             :options="playersComputed"
-            :onChange="console.log('onChange: Dropdown playersComputed ')"
+            :onChange="saveStorage()"
             class="dropdown"
             dropdownIcon="null"
           />
         </div>
         <div class="game-player-selector">
           <Dropdown
-            v-model="turnScores.game"
+            v-model="turnScores.gameType"
             :options="GameType.types"
             optionLabel="id"
             class="dropdown"
@@ -157,9 +155,9 @@ function loadXgames(nb: number) {
           <Dropdown
             class="score"
             v-model="playerScore.score"
-            :options="turnScores.game.possibleScores.map(String)"
+            :options="turnScores.gameType.possibleScores.map(String)"
             @change="updatePlayerTotalScore(playerScore.player)"
-            :disabled="turnScores.game.isNull"
+            :disabled="turnScores.gameType.isNull"
             dropdownIcon="null"
           /><!--:model-value="playerScore.score"-->
         </div>
